@@ -98,6 +98,7 @@ then
     TARGET_LV_NAME=`echo $LV_NAME-$VMID`
     TARGET_DEV="/dev/zvol/${DATASET_NAME}/${TARGET_LV_NAME}"
     TARGET_HOST="${TARGET%.$_DATASET_NAME.$LV_NAME}"
+    SNAPSHOT_NAME="VM-${VMID}"
 
 #-------------------------------------------------------------------------------
 # Clone script
@@ -115,7 +116,8 @@ then
 
         # clone lv with dd
         #$SUDO $DD if=$SOURCE_DEV of=$TARGET_DEV bs=2M
-        $SUDO /sbin/zfs clone ${DATASET_NAME}/${LV_NAME}@snap ${DATASET_NAME}/${TARGET_LV_NAME}
+        $SUDO /sbin/zfs snapshot ${DATASET_NAME}/${LV_NAME}@${SNAPSHOT_NAME}
+        $SUDO /sbin/zfs clone ${DATASET_NAME}/${LV_NAME}@${SNAPSHOT_NAME} ${DATASET_NAME}/${TARGET_LV_NAME}
 
         # new iscsi target
         $SUDO $(tgt_setup_lun "$NEW_IQN" "$TARGET_DEV")
