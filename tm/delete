@@ -108,6 +108,7 @@ fi
 
 LOGOUT_CMD=$(cat <<EOF
     set -e
+    rm -f "$DST_PATH"
     $SUDO $(iscsiadm_logout $NEW_IQN)
 EOF
 )
@@ -141,6 +142,7 @@ EOF
 )
 elif [ "$VBD_TYPE" = "zfs" ]
 then
+    SNAPSHOT_NAME="VM-${VMID}"
     DELETE_CMD=$(cat <<EOF
         set -e
         # get tid for IQN
@@ -155,7 +157,7 @@ then
         # remove lv
         for i in \$(seq 1 3)
         do
-            $SUDO /sbin/zfs destroy $DATASET_NAME/$TARGET_LV_NAME
+            $SUDO /sbin/zfs destroy -R $DATASET_NAME/$LV_NAME@$SNAPSHOT_NAME
             if [ \$? -eq 0 ]
             then 
                 break;
