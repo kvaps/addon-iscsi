@@ -130,15 +130,19 @@ http://*|https://*)
     ;;
 
 *)
-    if [ `check_restricted $SRC` -eq 1 ]; then
-        log_error "Not allowed to copy images from $RESTRICTED_DIRS"
-        error_message "Not allowed to copy image file $SRC"
-        exit -1
-    fi
-
-    log "Copying local image $SRC to the image repository"
-
-    DUMP="$COPY_COMMAND"
+    # Now we disable all local path
+    log_error "Not allowed to copy images from $RESTRICTED_DIRS"
+    error_message "Not allowed to copy image file $SRC"
+    exit -1
+#    if [ `check_restricted $SRC` -eq 1 ]; then
+#        log_error "Not allowed to copy images from $RESTRICTED_DIRS"
+#        error_message "Not allowed to copy image file $SRC"
+#        exit -1
+#    fi
+#
+#    log "Copying local image $SRC to the image repository"
+#
+#    DUMP="$COPY_COMMAND"
     ;;
 esac
 
