@@ -125,10 +125,11 @@ then
     _DATASET_NAME=`echo $IQN|$AWK -F. '{print $(NF-1)}'`
     SOURCE_DEV="/dev/zvol/$DATASET_NAME/$LV_NAME"
 
-    TARGET=`arg_path $IQN`
     TARGET_LV_NAME=`echo $NEW_IQN|$AWK -F. '{print $(NF)}'`
     TARGET_DEV="/dev/zvol/$DATASET_NAME/$TARGET_LV_NAME"
-    TARGET_HOST="${TARGET%.$_DATASET_NAME.$LV_NAME}"
+    TARGET_HOST="${HOST}"
+    SNAPSHOT_NAME="VM-${VMID}"
+    LV_PARENT_NAME="${LV_NAME%-$VMID}"
 
     CLONE_CMD=$(cat <<EOF
         set -e
@@ -141,9 +142,18 @@ then
             TID=\$($SUDO $(tgtadm_get_tid_for_iqn "$IQN"))
 
             $SUDO $(tgtadm_target_delete "\$TID")
-            $SUDO $SYNC
-            $SUDO /sbin/zfs destroy $DATASET_NAME/$LV_NAME
             $SUDO $(tgt_admin_dump_config "$TARGET_CONF")
+            $SUDO $SYNC
+            sleep 10
+            for i in \$(seq 1 3)
+            do
+                    $SUDO /sbin/zfs destroy -R $DATASET_NAME/$LV_PARENT_NAME@$SNAPSHOT_NAME
+                    if [ \$? -eq 0 ]
+                    then
+                            break
+                    fi
+                    sleep 10
+            done
         fi
 EOF
 )
