@@ -7,11 +7,11 @@ oneimage = os.popen("oneimage list --xml")
 
 tree = ET.fromstring(oneimage.read())
 
-print(tree.tag)
+#print(tree.tag)
 
 for image in tree.findall('./IMAGE'):
     imageid = image.find('./ID')
     print(imageid.text)
     for vmid in image.findall('./VMS/ID'):
-        print(imageid.text, vmid.text)
+        print(imageid.text+" "+vmid.text)
 
