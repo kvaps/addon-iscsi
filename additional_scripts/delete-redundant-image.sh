@@ -17,8 +17,8 @@ echo "Trying to delete redundant image $IMG_ID $VM_ID..."
 echo "Sanity checking..."
 DS_IMGS=`mktemp`
 ZFS_IMGS=`mktemp`
-python get-datastore-images.py >$DS_IMGS
-./get-zfs-images.sh >$ZFS_IMGS
+python image-get-datastore-list.py >$DS_IMGS
+./image-get-zfs-list.sh >$ZFS_IMGS
 PASS=1
 if [ -z "$VM_ID" ]
 then

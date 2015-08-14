@@ -10,8 +10,8 @@ then
 	rm -f $DS_IMAGES 2>/dev/null
 fi
 
-./get-zfs-images.sh | sort > $ZFS_IMAGES
-python get-datastore-images.py | sort > $DS_IMAGES
+./image-get-zfs-list.sh | sort > $ZFS_IMAGES
+python image-get-datastore-list.py | sort > $DS_IMAGES
 
 echo "Missing images (only exist in Datastore DB, missing in ZFS) [IMG_ID VMID]:"
 diff $DS_IMAGES $ZFS_IMAGES | grep "^<" | sed 's/< //'
