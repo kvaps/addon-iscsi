@@ -1,5 +1,11 @@
 #!/bin/bash
 
+read -p "Use this script with extreme caution. If you know extractly what you are doing, enter YES: "
+if [[ ! $REPLY = "YES" ]]
+then
+	exit 1
+fi
+
 TARGET_FILE=`mktemp`
 DB_FILE=`mktemp`
 HOST_RANGE=`seq 99 200`
@@ -24,12 +30,14 @@ do
 	echo "In HOST session list & Datastore image database, not in HEAD target list:"
 	for s in `ssh 10.10.0.$i "sudo iscsiadm -m session" 2>/dev/null | awk '{print $4}'`
 	do
+		ids_dash=`echo $s | grep -o "[0-9]\+-[0-9]\+$"`
 		ids=`echo $s | grep -o "[0-9]\+-[0-9]\+$" | sed 's/-/ /'`
 		if [ -z "$ids" ]
 		then
+			ids_dash=`echo $s | grep -o "[0-9]\+$"`
 			ids=`echo $s | grep -o "[0-9]\+$"`
 		fi
-		grep "\<$s\>" $TARGET_FILE >/dev/null || (grep "\<$ids\>" $DB_FILE >/dev/null && echo "$s")
+		grep "\<$s\>" $TARGET_FILE >/dev/null || (grep "\<$ids\>" $DB_FILE >/dev/null && echo "$s" && ssh 10.10.0.15 "sudo tgt-setup-lun-one -d /dev/zvol/cloud/opennebula/persistent/lv-one-$ids_dash -n $s" && ssh 10.10.0.15 "sudo tgt-admin --dump | sudo tee /etc/tgt/targets.conf >/dev/null")
 	done
 
 	echo "In HOST session list & HEAD target list, not in Datastore image database:"
