@@ -9,6 +9,12 @@ then
 	exit 1
 fi
 
+read -p "Use this script with extreme caution. If you know extractly what you are doing, enter YES: "
+if [[ ! $REPLY = "YES" ]]
+then
+	exit 1
+fi
+
 IMG_ID=$1
 VM_ID=$2
 
@@ -52,6 +58,14 @@ then
 fi
 
 echo "Sanity check passed, trying to delete image..."
+
+if [ -z "$VM_ID" ]
+then
+	ssh 10.10.0.15 "sudo zfs destroy -R cloud/opennebula/persistent/lv-one-$IMG_ID"
+else
+	ssh 10.10.0.15 "sudo zfs destroy -R cloud/opennebula/persistent/lv-one-$IMG_ID-$VM_ID"
+fi
+
 
 rm -f $DS_IMGS
 rm -f $ZFS_IMGS
