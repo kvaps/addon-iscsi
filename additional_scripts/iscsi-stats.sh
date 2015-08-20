@@ -4,6 +4,12 @@ TARGET_FILE=`mktemp`
 DB_FILE=`mktemp`
 HOST_RANGE=`seq 99 200`
 
+if [ $# -gt 0 ]
+then
+	HOST_RANGE="$1"
+	echo "Checking single host $HOST_RANGE..."
+fi
+
 ssh 10.10.0.15 "sudo tgtadm --lld iscsi --op show --mode target" | grep "^Target" > $TARGET_FILE
 python image-get-datastore-list.py >$DB_FILE
 
