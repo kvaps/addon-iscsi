@@ -12,6 +12,9 @@ tree = ET.fromstring(oneimage.read())
 for image in tree.findall('./IMAGE'):
     imageid = image.find('./ID')
     print(imageid.text)
+    is_persistent = image.find('./PERSISTENT')
+    if is_persistent.text == '1':
+        continue
     for vmid in image.findall('./VMS/ID'):
         print(imageid.text+" "+vmid.text)
 
