@@ -61,6 +61,20 @@ echo "Sanity check passed, trying to delete image..."
 
 if [ -z "$VM_ID" ]
 then
+	TID=`ssh 10.10.0.15 "sudo tgtadm --lld iscsi --op show --mode target | grep \"^Target\" | grep \"lv-one-$IMG_ID\" | awk '{split(\$2,tmp,\":\"); print(tmp[1]);}'"`
+else
+	TID=`ssh 10.10.0.15 "sudo tgtadm --lld iscsi --op show --mode target | grep \"^Target\" | grep \"lv-one-$IMG_ID-$VM_ID\" | awk '{split(\\$2,tmp,\":\"); print(tmp[1]);}'"`
+fi
+
+if [ -n "$TID" ]
+then
+	echo -n "Target ID non-zero, try to delete target $TID..."
+	TID=`ssh 10.10.0.15 "sudo tgtadm --lld iscsi --op delete --mode target --tid $TID"`
+	echo  "done."
+fi
+
+if [ -z "$VM_ID" ]
+then
 	ssh 10.10.0.15 "sudo zfs destroy -R cloud/opennebula/persistent/lv-one-$IMG_ID"
 else
 	ssh 10.10.0.15 "sudo zfs destroy -R cloud/opennebula/persistent/lv-one-$IMG_ID-$VM_ID"
