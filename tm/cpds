@@ -67,7 +67,7 @@ SAVE_AS="${XPATH_ELEMENTS[j++]}"
 PERSISTENT="${XPATH_ELEMENTS[j++]}"
 
 if [ -z "$PERSISTENT" ]; then
-    IQN=$IQN-$VMID
+    IQN=$IQN-$VMID-$DISK_ID
 fi
 
 #-------------------------------------------------------------------------------

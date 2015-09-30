@@ -68,7 +68,7 @@ SAVE_AS="${XPATH_ELEMENTS[j++]}"
 PERSISTENT="${XPATH_ELEMENTS[j++]}"
 
 if [ -z "$PERSISTENT" ]; then
-    IQN=$IQN-$VMID
+    IQN=$IQN-$VMID-$DISK_ID
 fi
 
 log "Logging out $IQN"
@@ -128,8 +128,8 @@ then
     TARGET_LV_NAME=`echo $NEW_IQN|$AWK -F. '{print $(NF)}'`
     TARGET_DEV="/dev/zvol/$DATASET_NAME/$TARGET_LV_NAME"
     TARGET_HOST="${HOST}"
-    SNAPSHOT_NAME="VM-${VMID}"
-    LV_PARENT_NAME="${LV_NAME%-$VMID}"
+    SNAPSHOT_NAME="VM-${VMID}-${DISK_ID}"
+    LV_PARENT_NAME="${LV_NAME%-$VMID-$DISK_ID}"
 
     CLONE_CMD=$(cat <<EOF
         set -e
