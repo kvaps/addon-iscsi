@@ -61,7 +61,7 @@ echo "Sanity check passed, trying to delete image..."
 
 if [ -z "$VM_ID" ]
 then
-	TID=`ssh 10.10.0.15 "sudo tgtadm --lld iscsi --op show --mode target | grep \"^Target\" | grep \"lv-one-$IMG_ID\" | awk '{split(\$2,tmp,\":\"); print(tmp[1]);}'"`
+	TID=`ssh 10.10.0.15 "sudo tgtadm --lld iscsi --op show --mode target | grep \"^Target\" | grep \"lv-one-$IMG_ID\" | awk '{split(\\$2,tmp,\":\"); print(tmp[1]);}'"`
 else
 	TID=`ssh 10.10.0.15 "sudo tgtadm --lld iscsi --op show --mode target | grep \"^Target\" | grep \"lv-one-$IMG_ID-$VM_ID\" | awk '{split(\\$2,tmp,\":\"); print(tmp[1]);}'"`
 fi
