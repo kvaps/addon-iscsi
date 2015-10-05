@@ -46,11 +46,13 @@ while IFS= read -r -d '' element; do
     XPATH_ELEMENTS[i++]="$element"
 done < <($XPATH     /DS_DRIVER_ACTION_DATA/IMAGE/SOURCE \
                     /DS_DRIVER_ACTION_DATA/DATASTORE/TEMPLATE/BRIDGE_LIST \
+                    /DS_DRIVER_ACTION_DATA/DATASTORE/TEMPLATE/ZFS_CMD \
                     /DS_DRIVER_ACTION_DATA/DATASTORE/TEMPLATE/DATASET_NAME \
                     /DS_DRIVER_ACTION_DATA/DATASTORE/TEMPLATE/VBD_TYPE)
 
 SRC="${XPATH_ELEMENTS[j++]}"
 BRIDGE_LIST="${XPATH_ELEMENTS[j++]:-$BRIDGE_LIST}"
+ZFS_CMD="${XPATH_ELEMENTS[j++]:-$ZFS_CMD}"
 DATASET_NAME="${XPATH_ELEMENTS[j++]:-$DATASET_NAME}"
 VBD_TYPE="${XPATH_ELEMENTS[j++]:-$VBD_TYPE}"
 
@@ -96,7 +98,7 @@ then
         TID=\$($SUDO $(tgtadm_get_tid_for_iqn "$IQN"))
         $SUDO $(tgtadm_target_delete "\$TID")
         $SUDO $SYNC
-        $SUDO /sbin/zfs destroy -R $DATASET_NAME/$LV_NAME
+        $SUDO $ZFS_CMD destroy -R $DATASET_NAME/$LV_NAME
         $SUDO $(tgt_admin_dump_config "$TARGET_CONF")
 EOF
 )

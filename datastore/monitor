@@ -46,11 +46,13 @@ unset i j XPATH_ELEMENTS
 while IFS= read -r -d '' element; do
     XPATH_ELEMENTS[i++]="$element"
 done < <($XPATH     /DS_DRIVER_ACTION_DATA/DATASTORE/TEMPLATE/BRIDGE_LIST \
+                    /DS_DRIVER_ACTION_DATA/DATASTORE/TEMPLATE/ZFS_CMD \
                     /DS_DRIVER_ACTION_DATA/DATASTORE/TEMPLATE/VG_NAME \
                     /DS_DRIVER_ACTION_DATA/DATASTORE/TEMPLATE/DATASET_NAME \
                     /DS_DRIVER_ACTION_DATA/DATASTORE/TEMPLATE/VBD_TYPE)
 
 BRIDGE_LIST="${XPATH_ELEMENTS[j++]}"
+ZFS_CMD="${XPATH_ELEMENTS[j++]:-$ZFS_CMD}"
 VG_NAME="${XPATH_ELEMENTS[j++]:-$VG_NAME}"
 DATASET_NAME="${XPATH_ELEMENTS[j++]:-$DATASET_NAME}"
 VBD_TYPE="${XPATH_ELEMENTS[j++]:-$VBD_TYPE}"
@@ -83,9 +85,9 @@ elif [ "$VBD_TYPE" = "zfs" ]
 then
     MONITOR_SCRIPT=$(cat <<EOF
         set -e
-        TOTAL_MB=\$($SUDO /sbin/zfs list -H -p  -o available,used $DATASET_NAME | $AWK '{printf "%d", (\$1+\$2)/1024/1024}'  | $TR -d ' ')
-        FREE_MB=\$($SUDO /sbin/zfs get -H -p available $DATASET_NAME | $AWK '{printf "%d",\$3/1024/1024}' | $TR -d ' ')
-        USED_MB=\$($SUDO /sbin/zfs get -H -p used $DATASET_NAME | $AWK '{printf "%d",\$3/1024/1024}' | $TR -d ' ')
+        TOTAL_MB=\$($SUDO $ZFS_CMD list -H -p  -o available,used $DATASET_NAME | $AWK '{printf "%d", (\$1+\$2)/1024/1024}'  | $TR -d ' ')
+        FREE_MB=\$($SUDO $ZFS_CMD get -H -p available $DATASET_NAME | $AWK '{printf "%d",\$3/1024/1024}' | $TR -d ' ')
+        USED_MB=\$($SUDO $ZFS_CMD get -H -p used $DATASET_NAME | $AWK '{printf "%d",\$3/1024/1024}' | $TR -d ' ')
         echo "USED_MB=\$USED_MB"
         echo "TOTAL_MB=\$TOTAL_MB"
         echo "FREE_MB=\$FREE_MB"

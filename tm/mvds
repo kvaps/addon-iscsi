@@ -147,7 +147,7 @@ then
             sleep 10
             for i in \$(seq 1 3)
             do
-                    $SUDO /sbin/zfs destroy -R $DATASET_NAME/$LV_PARENT_NAME@$SNAPSHOT_NAME
+                    $SUDO $ZFS_CMD destroy -R $DATASET_NAME/$LV_PARENT_NAME@$SNAPSHOT_NAME
                     if [ \$? -eq 0 ]
                     then
                             break

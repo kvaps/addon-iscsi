@@ -105,20 +105,20 @@ then
 # Clone script
 #-------------------------------------------------------------------------------
 
-        #SIZE=\$($SUDO /sbin/zfs list -H -p  -o used $DATASET_NAME/$LV_NAME | $AWK '{printf "%d", \$1/1024/1024}'  | $TR -d ' ')
-        #$SUDO /sbin/zfs create -V \${SIZE}M ${DATASET_NAME}/${TARGET_LV_NAME}
+        #SIZE=\$($SUDO $ZFS_CMD list -H -p  -o used $DATASET_NAME/$LV_NAME | $AWK '{printf "%d", \$1/1024/1024}'  | $TR -d ' ')
+        #$SUDO $ZFS_CMD create -V \${SIZE}M ${DATASET_NAME}/${TARGET_LV_NAME}
     CLONE_CMD=$(cat <<EOF
         set -e
 
         # get size
-        SIZE=\$($SUDO /sbin/zfs list -H -p  -o used $DATASET_NAME/$LV_NAME | $AWK '{printf "%d", \$1}'  | $TR -d ' ')
+        SIZE=\$($SUDO $ZFS_CMD list -H -p  -o used $DATASET_NAME/$LV_NAME | $AWK '{printf "%d", \$1}'  | $TR -d ' ')
         # create lv
-        #$SUDO /sbin/zfs create -V \${SIZE} ${DATASET_NAME}/${TARGET_LV_NAME}
+        #$SUDO $ZFS_CMD create -V \${SIZE} ${DATASET_NAME}/${TARGET_LV_NAME}
 
         # clone lv with dd
         #$SUDO $DD if=$SOURCE_DEV of=$TARGET_DEV bs=2M
-        $SUDO /sbin/zfs snapshot ${DATASET_NAME}/${LV_NAME}@${SNAPSHOT_NAME}
-        $SUDO /sbin/zfs clone ${DATASET_NAME}/${LV_NAME}@${SNAPSHOT_NAME} ${DATASET_NAME}/${TARGET_LV_NAME}
+        $SUDO $ZFS_CMD snapshot ${DATASET_NAME}/${LV_NAME}@${SNAPSHOT_NAME}
+        $SUDO $ZFS_CMD clone ${DATASET_NAME}/${LV_NAME}@${SNAPSHOT_NAME} ${DATASET_NAME}/${TARGET_LV_NAME}
 
         # new iscsi target
         $SUDO $(tgt_setup_lun "$NEW_IQN" "$TARGET_DEV")

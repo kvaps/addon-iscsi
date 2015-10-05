@@ -171,7 +171,7 @@ then
         do
 	    # XXX: NEW_NAME_PATTERN:
 	    # Try twice for old name pattern
-            $SUDO /sbin/zfs destroy -R $DATASET_NAME/$LV_NAME@$SNAPSHOT_NAME || $SUDO /sbin/zfs destroy -R $DATASET_NAME/$LV_NAME@$OLD_SNAPSHOT_NAME
+            $SUDO $ZFS_CMD destroy -R $DATASET_NAME/$LV_NAME@$SNAPSHOT_NAME || $SUDO $ZFS_CMD destroy -R $DATASET_NAME/$LV_NAME@$OLD_SNAPSHOT_NAME
             if [ \$? -eq 0 ]
             then 
                 break;
