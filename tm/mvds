@@ -145,15 +145,9 @@ then
             $SUDO $(tgt_admin_dump_config "$TARGET_CONF")
             $SUDO $SYNC
             sleep 10
-            for i in \$(seq 1 3)
-            do
-                    $SUDO $ZFS_CMD destroy -R $DATASET_NAME/$LV_PARENT_NAME@$SNAPSHOT_NAME
-                    if [ \$? -eq 0 ]
-                    then
-                            break
-                    fi
-                    sleep 10
-            done
+            $SUDO $ZFS_CMD rename ${DATASET_NAME}/${LV_NAME} ${DATASET_NAME}/${TARGET_LV_NAME}
+            $SUDO $(tgt_setup_lun "$NEW_IQN" "$TARGET_DEV")
+            $SUDO $(tgt_admin_dump_config "$TARGET_CONF")
         fi
 EOF
 )

@@ -98,7 +98,17 @@ then
         TID=\$($SUDO $(tgtadm_get_tid_for_iqn "$IQN"))
         $SUDO $(tgtadm_target_delete "\$TID")
         $SUDO $SYNC
-        $SUDO $ZFS_CMD destroy -R $DATASET_NAME/$LV_NAME
+        $SUDO $ZFS_CMD list -H -r -t snapshot -o name $DATASET_NAME/$LV_NAME | while read SNAPSHOT; do
+            CLONE=\$($SUDO $ZFS_CMD get -H -o value clones \$SNAPSHOT)
+            if [ "\$CLONE" != "-" ]; then
+                $SUDO $ZFS_CMD promote \$CLONE
+            fi
+        done
+        ORIGIN=\$($SUDO $ZFS_CMD get -H -o value origin $SRC_PATH)
+        $SUDO $ZFS_CMD destroy -r $DATASET_NAME/$LV_NAME
+        if [ "\$ORIGIN" != "-" ]; then
+            $SUDO $ZFS_CMD destroy \$ORIGIN
+        fi
         $SUDO $(tgt_admin_dump_config "$TARGET_CONF")
 EOF
 )

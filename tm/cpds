@@ -102,7 +102,11 @@ then
     TARGET_HOST="${TARGET%.$_DATASET_NAME.$LV_NAME}"
 
     CLONE_CMD=$(cat <<EOF
-        $SUDO $DD if=$SOURCE_DEV of=$TARGET_DEV bs=2M
+        $SUDO $ZFS_CMD snapshot ${DATASET_NAME}/${LV_NAME}@${TARGET_LV_NAME}
+        $SUDO $ZFS_CMD clone ${DATASET_NAME}/${LV_NAME}@${TARGET_LV_NAME} ${DATASET_NAME}/${TARGET_LV_NAME}
+        $SUDO $ZFS_CMD promote ${DATASET_NAME}/${TARGET_LV_NAME}
+        $SUDO $(tgt_setup_lun "$NEW_IQN" "$TARGET_DEV")
+        $SUDO $(tgt_admin_dump_config "$TARGET_CONF")
 EOF
 )
 fi
